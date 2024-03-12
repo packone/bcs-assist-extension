@@ -1,0 +1,20 @@
+form,
+body {
+  display: grid;
+}
+button {
+  width: fit-content;
+}
+#resetButton {
+  justify-self: end;
+}
+
+.optionHeader{
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.optionDescriptionText{
+    font-style: italic;
+    margin: 0;
+}

@@ -1,0 +1,35 @@
+{
+    "description": "Assists the usage of Projektron BCS",
+    "manifest_version": 2,
+    "name": "projektron-bcs-assist",
+    "version": "1.2",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/bcs/mybcs/dayeffortrecording/*"
+            ],
+            "js": [
+                "modify-bcs-dayeffortrecording.js"
+            ]
+        },
+        {
+            "matches": [
+                "*://*/bcs/mybcs/deputatsummary/*"
+            ],
+            "js": [
+                "modify-bcs-deputatsummary.js"
+            ]
+        }
+    ],
+    "options_ui": {
+        "page": "options.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "projektron-bcs-assist@projektron-bcs-assist"
+        }
+    }
+}

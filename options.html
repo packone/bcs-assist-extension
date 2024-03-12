@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+
+  <body>
+    <form>
+      <p class="optionHeader">Hinweis Buchungsabschluss</p>
+      <p class="optionDescriptionText">Geignet wenn Workflow / weitere Gründe nicht erlaubt Buchungsabschluss nach jeder Buchung / Täglich diesen zu setzen.</p>
+      <label
+        ><input
+          type="checkbox"
+          id="featFlagHintBuchungsabschluss"
+          name="featFlagHintBuchungsabschluss"
+        />
+        zu Wochen-/Monatsende anzeigen
+      </label>
+      <label
+        ><input
+          type="checkbox"
+          id="ignoriereBuchungsabschluss"
+          name="ignoriereBuchungsabschluss"
+        />
+        zu Wochen-/Monatsende immer einblenden (trotz
+        Buchungsabschluss)
+      </label>
+      <p class="optionHeader">Arbeitszeitauswertung</p>
+      <label
+        ><input
+          type="checkbox"
+          id="featFlagNavigateArbeitszeitauswertung"
+          name="featFlagNavigateArbeitszeitauswertung"
+        />
+        manuelle Ansicht (Monatsanfang bis gestern)
+      </label>
+      <button type="submit">Speichern</button>
+    </form>
+    <button id="resetButton" type="reset">Standardeinstellungen wiederherstellen</button>
+
+    <script src="options.js"></script>
+  </body>
+</html>

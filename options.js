@@ -1,0 +1,45 @@
+// const elIgnoriereBuchungsabschluss = function () {
+//   return document.querySelector("#ignoriereBuchungsabschluss");
+// };
+
+// localstorage settings
+function saveOptions(e) {
+  e.preventDefault();
+  browser.storage.sync.set({
+    ignoriereBuchungsabschluss: document.querySelector(
+      "#ignoriereBuchungsabschluss"
+    ).checked,
+    featFlagHintBuchungsabschluss: document.querySelector(
+      "#featFlagHintBuchungsabschluss"
+    ).checked,
+    featFlagNavigateArbeitszeitauswertung: document.querySelector(
+      "#featFlagNavigateArbeitszeitauswertung"
+    ).checked,
+  });
+}
+
+function restoreOptions() {
+  function onError(error) {
+    console.log(`Error: ${error}`);
+  }
+
+  browser.storage.sync.get("ignoriereBuchungsabschluss").then((result) => {
+    document.querySelector("#ignoriereBuchungsabschluss").checked =
+      result.ignoriereBuchungsabschluss || false;
+  }, onError);
+  browser.storage.sync.get("featFlagHintBuchungsabschluss").then((result) => {
+    document.querySelector("#featFlagHintBuchungsabschluss").checked =
+      result.featFlagHintBuchungsabschluss || true;
+  }, onError);
+  browser.storage.sync.get("featFlagNavigateArbeitszeitauswertung").then((result) => {
+    document.querySelector("#featFlagNavigateArbeitszeitauswertung").checked =
+      result.featFlagNavigateArbeitszeitauswertung || true;
+  }, onError);
+}
+
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.querySelector("form").addEventListener("submit", saveOptions);
+document.getElementById("resetButton").addEventListener("click", () => {
+  browser.storage.sync.clear();
+  restoreOptions();
+});
