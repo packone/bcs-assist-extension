@@ -1,17 +1,13 @@
 /** BCS Seite: Arbeitszeitauswertung */
 /** async IIFE, damit "return" möglich */
 (async () => {
-  const featFlagNavigateArbeitszeitauswertung =
-    (await readLocalStorage("featFlagNavigateArbeitszeitauswertung").catch(
-      () => {}
-    )) ?? true;
-  if (!featFlagNavigateArbeitszeitauswertung) return;
+  if (!(await readLocalStorage("featFlagNavigateArbeitszeitauswertung", true)))
+    return;
 
-  // TODO: magic strings entfernen (enum)
-  const arbeitszeitauswertungAutomatischeWahl =
-    (await readLocalStorage("arbeitszeitauswertungAutomatischeWahl").catch(
-      () => {}
-    )) ?? CustomControlMode.Gestern;
+  const arbeitszeitauswertungAutomatischeWahl = await readLocalStorage(
+    "arbeitszeitauswertungAutomatischeWahl",
+    CustomControlMode.Gestern
+  );
 
   // Wenn Tab "Gebuchte Zeiten" geöffnet
   const tabGebuchteZeiten = "deputattable";
@@ -90,7 +86,7 @@
     elCalEndDate.value = newEndDateNum + elCalEndDate.value.substring(2);
   }
 
-  // date changed => sumbit
+  // date changed => submit
   if (
     currentStartDateVal !== elCalStartDate.value ||
     currentEndDateVal !== elCalEndDate.value
@@ -119,11 +115,11 @@ function getHTMLCustomControl() {
 `;
 }
 
-async function readLocalStorage(key) {
-  return new Promise((resolve, reject) => {
+async function readLocalStorage(key, fallbackValue) {
+  return new Promise((resolve) => {
     browser.storage.sync.get([key], function (result) {
       if (result === undefined || result[key] === undefined) {
-        reject();
+        resolve(fallbackValue);
       } else {
         resolve(result[key]);
       }

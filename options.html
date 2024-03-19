@@ -7,37 +7,50 @@
 
   <body>
     <form>
-      <p class="optionHeader">Hinweis Buchungsabschluss</p>
-      <p class="optionDescriptionText">Geignet wenn Workflow / weitere Gründe nicht erlaubt Buchungsabschluss nach jeder Buchung / Täglich diesen zu setzen.</p>
-      <label
-        ><input
-          type="checkbox"
-          id="featFlagHintBuchungsabschluss"
-          name="featFlagHintBuchungsabschluss"
-        />
-        zu Wochen-/Monatsende anzeigen
-      </label>
-      <label
-        ><input
-          type="checkbox"
-          id="ignoriereBuchungsabschluss"
-          name="ignoriereBuchungsabschluss"
-        />
-        zu Wochen-/Monatsende immer einblenden (trotz
-        Buchungsabschluss)
-      </label>
-      <p class="optionHeader">Arbeitszeitauswertung</p>
-      <label
-        ><input
-          type="checkbox"
-          id="featFlagNavigateArbeitszeitauswertung"
-          name="featFlagNavigateArbeitszeitauswertung"
-        />
-        manuelle Ansicht (Monatsanfang bis gestern)
-      </label>
-      <button type="submit">Speichern</button>
+      <ul>
+        <li>
+          <div>
+            <h2>Hinweis Buchungsabschluss</h2>
+            <p>
+              Geignet wenn Workflow / weitere Gründe nicht erlaubt
+              Buchungsabschluss nach jeder Buchung / Täglich diesen zu setzen.
+            </p>
+            <label
+              ><input
+                type="checkbox"
+                id="featFlagHintBuchungsabschluss"
+                name="featFlagHintBuchungsabschluss"
+              />
+              zu Wochen-/Monatsende anzeigen
+            </label>
+            <label
+              ><input
+                type="checkbox"
+                id="ignoriereBuchungsabschluss"
+                name="ignoriereBuchungsabschluss"
+              />
+              zu Wochen-/Monatsende immer einblenden (trotz Buchungsabschluss)
+            </label>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>Arbeitszeitauswertung</h2>
+            <label
+              ><input
+                type="checkbox"
+                id="featFlagNavigateArbeitszeitauswertung"
+                name="featFlagNavigateArbeitszeitauswertung"
+              />
+              Steuerung "automatische Wahl" (Monatsanfang bis gestern) anzeigen
+            </label>
+          </div>
+        </li>
+      </ul>
     </form>
-    <button id="resetButton" type="reset">Standardeinstellungen wiederherstellen</button>
+    <button id="resetButton" type="reset">
+      Standardeinstellungen wiederherstellen
+    </button>
 
     <script src="options.js"></script>
   </body>

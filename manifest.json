@@ -1,8 +1,8 @@
 {
-    "description": "Assists the usage of Projektron BCS",
+    "description": "quality of life improvements for Projektron BCS",
     "manifest_version": 2,
-    "name": "projektron-bcs-assist",
-    "version": "1.2",
+    "name": "bcs-assist",
+    "version": "1.3",
     "content_scripts": [
         {
             "matches": [
@@ -29,7 +29,7 @@
     ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "projektron-bcs-assist@projektron-bcs-assist"
+            "id": "{4d913e89-7ab8-4ba6-bbe8-9c6a366248d5}"
         }
     }
 }

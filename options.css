@@ -9,12 +9,29 @@ button {
   justify-self: end;
 }
 
-.optionHeader{
-    font-size: 1.2em;
-    margin: 0;
-}
+form > ul {
+  /* list icon size */
+  padding-left: 1.6rem;
+  font-size: 1.6rem;
 
-.optionDescriptionText{
-    font-style: italic;
-    margin: 0;
+  /* gap */
+  > li + li {
+    margin-top: 10px;
+  }
+
+  > li > div {
+    display: grid;
+    font-size: 1rem;
+
+    > h2 {
+      font-size: 1.2rem;
+      margin: 0;
+      font-weight: normal;
+
+      + p {
+        font-style: italic;
+        margin: 0;
+      }
+    }
+  }
 }

@@ -1,14 +1,12 @@
-/** BCS Seite: Buchungsabschluss */
+/** BCS Seite: Tagesbuchen */
 /** async IIFE, damit "return" möglich */
 (async () => {
-  const featFlagHintBuchungsabschluss =
-    (await readLocalStorage("featFlagHintBuchungsabschluss").catch(() => {})) ??
-    true;
-  if (!featFlagHintBuchungsabschluss) return;
+  if (!(await readLocalStorage("featFlagHintBuchungsabschluss", true))) return;
 
-  const ignoriereBuchungsabschluss =
-    (await readLocalStorage("ignoriereBuchungsabschluss").catch(() => {})) ??
-    false;
+  const ignoriereBuchungsabschluss = await readLocalStorage(
+    "ignoriereBuchungsabschluss",
+    false
+  );
 
   const currentDateField = document.getElementById(
     "daytimerecording,Selections,effortRecordingDate_intervaldisplay"
@@ -114,6 +112,30 @@ async function getBuchungsabschlussDate() {
   );
 }
 
+/** TODO beachtung feiertage fertigstellen */
+async function getHolidays(year) {
+  const response = await fetch(
+    window.location.origin +
+      "/bcs/mybcs/dayeffortrecording/display?" +
+      new URLSearchParams({
+        bcs_ajax_component: "daytimerecording,Selections,effortRecordingDate",
+        bcs_ajax_type: 3,
+        bcs_ajax_class: "holidaycalendar",
+        req_holidays_for_year: year,
+        req_holidays_for_owner: document.getElementsByName("oid").value,
+      })
+  ).catch(function (err) {
+    console.log("Failed to fetch page: ", err);
+  });
+
+  // TODO Error Case?
+  if (!response) return;
+
+  const json = await response.text();
+  var o = JSON.parse(json);
+  return o.years[0].holidays.map((m) => new Date(m.date));
+}
+
 /** "Fr. 01.03.24" zu Date */
 function getDateFromBcsString(bcsDateString) {
   return new Date(
@@ -127,11 +149,11 @@ function getDateFromBcsString(bcsDateString) {
   );
 }
 
-async function readLocalStorage(key) {
-  return new Promise((resolve, reject) => {
+async function readLocalStorage(key, fallbackValue) {
+  return new Promise((resolve) => {
     browser.storage.sync.get([key], function (result) {
       if (result === undefined || result[key] === undefined) {
-        reject();
+        resolve(fallbackValue);
       } else {
         resolve(result[key]);
       }
