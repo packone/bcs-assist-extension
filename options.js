@@ -4,6 +4,9 @@ function saveOptions() {
     ignoriereBuchungsabschluss: document.querySelector(
       "#ignoriereBuchungsabschluss"
     ).checked,
+    ignoriereFeiertage: document.querySelector(
+      "#ignoriereFeiertage"
+    ).checked,
     featFlagHintBuchungsabschluss: document.querySelector(
       "#featFlagHintBuchungsabschluss"
     ).checked,
@@ -17,6 +20,10 @@ function restoreOptions() {
   browser.storage.sync.get("ignoriereBuchungsabschluss").then((result) => {
     document.querySelector("#ignoriereBuchungsabschluss").checked =
       result.ignoriereBuchungsabschluss || false;
+  }, onError);
+  browser.storage.sync.get("ignoriereFeiertage").then((result) => {
+    document.querySelector("#ignoriereFeiertage").checked =
+      result.ignoriereFeiertage || false;
   }, onError);
   browser.storage.sync.get("featFlagHintBuchungsabschluss").then((result) => {
     document.querySelector("#featFlagHintBuchungsabschluss").checked =

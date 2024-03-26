@@ -16,22 +16,40 @@
     currentDateField.innerText.split("(")[0] // Kalenderwoche entfernen
   );
 
-  const isFriday = date.getDay() === 5;
+  const isFriday = isDateFriday(date);
 
   /*
    * - Setting day parameter to 0 means one day less than first day of the month which is last day of the previous month.
    * - getDay() not Saturday not Sunday
    * - getTime() Datum Wertevergleich, da Instanzvergleich nicht möglich
    */
-  const isLastDayOfMonthAndNotWeekend =
-    new Date(date.getFullYear(), date.getMonth() + 1, 0).getTime() ===
-      date.getTime() && ![0, 6].some((s) => s === date.getDay());
+  const isLastDayOfMonthAndNotWeekend = isDateLastDayOfMonthAndNotWeekend(date);
+
+  /*
+   * early because Holiday(-s)
+   */
+  const ignoriereFeiertage = await readLocalStorage(
+    "ignoriereFeiertage",
+    false
+  );
+  const isEarlyBasedOnHolidaysObj = new isEarlyBasedOnHolidays();
+  if (
+    isFriday == false &&
+    isLastDayOfMonthAndNotWeekend == false &&
+    ignoriereFeiertage == false
+  ) {
+    await isDateEarlyBasedOnHolidays(date, isEarlyBasedOnHolidaysObj);
+  }
 
   /*
    * Meldung in Abhängigkeit von Bedingungen anzeigen
    * (Freitag oder wenn letzter Tag des Monats unter der Woche ist)
    */
-  if (isFriday || isLastDayOfMonthAndNotWeekend) {
+  if (
+    isFriday ||
+    isLastDayOfMonthAndNotWeekend ||
+    isEarlyBasedOnHolidaysObj.isEarlyBasedOnHolidays
+  ) {
     // Buchungsabschlussdatum lesen
     const dateBuchungsabschluss = await getBuchungsabschlussDate();
 
@@ -56,6 +74,18 @@
         "beforeend",
         ` ${isFriday ? "Es ist Freitag." : ""}${
           isLastDayOfMonthAndNotWeekend ? "Letzer Tag des Monats." : ""
+        }${
+          isEarlyBasedOnHolidaysObj.isEarlyBasedOnHolidays
+            ? isEarlyBasedOnHolidaysObj.isReasonFridayInFuture
+              ? `Letzer Tag vor Freitag, da Feiertag/-e folgend: ${isEarlyBasedOnHolidaysObj.holidaysAheadArr.join(
+                  ", "
+                )}.`
+              : isEarlyBasedOnHolidaysObj.isReasonLastDayOfMonthAndNotWeekendInFuture
+              ? `Letzer Tag vor letzem Tag des Monats, da Feiertag/-e folgend: ${isEarlyBasedOnHolidaysObj.holidaysAheadArr.join(
+                  ", "
+                )}.`
+              : ""
+            : ""
         }`
       );
 
@@ -71,6 +101,48 @@
  * ****************************************************************************************************
  */
 
+function isDateFriday(date) {
+  return date.getDay() === 5;
+}
+
+function isDateLastDayOfMonthAndNotWeekend(date) {
+  return (
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getTime() ===
+      date.getTime() && ![0, 6].some((s) => s === date.getDay())
+  );
+}
+
+async function isDateEarlyBasedOnHolidays(date, isEarlyBasedOnHolidaysObj) {
+  const holidayDatesArr = await getHolidays(date.getFullYear());
+  holidayDatesArr.forEach((x) => x.date.setHours(0, 0, 0, 0));
+  var dateInFuture = addDaysToDate(date);
+  dateInFuture.setHours(0, 0, 0, 0);
+  while (true) {
+    const holidaysMatching = holidayDatesArr.filter(
+      (f) => f.date.getTime() === dateInFuture.getTime()
+    );
+    if (holidaysMatching.length == 0) break;
+    isEarlyBasedOnHolidaysObj.holidaysAheadArr.push(holidaysMatching[0].label);
+
+    const isFridayInFuture = isDateFriday(dateInFuture);
+    const isLastDayOfMonthAndNotWeekendInFuture =
+      isDateLastDayOfMonthAndNotWeekend(dateInFuture);
+    if (isFridayInFuture || isLastDayOfMonthAndNotWeekendInFuture) {
+      isEarlyBasedOnHolidaysObj.isEarlyBasedOnHolidays = true;
+      isEarlyBasedOnHolidaysObj.isReasonFridayInFuture = isFridayInFuture;
+      isEarlyBasedOnHolidaysObj.isReasonLastDayOfMonthAndNotWeekendInFuture =
+        isLastDayOfMonthAndNotWeekendInFuture;
+      break;
+    }
+    dateInFuture = addDaysToDate(dateInFuture);
+  }
+}
+
+function addDaysToDate(date, days = 1) {
+  // add time of one day in ms
+  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+}
+
 function getHTMLCustomMessage() {
   /*
    * css klasse nach "messagedisplay"
@@ -85,7 +157,7 @@ function getHTMLCustomMessage() {
 <div class="messagedisplay neutrals" id="TimeRecordingService_Success">
 <a class="close" onclick="BCS.MessageDisplay.close($(this).parent())" title="Meldung ausblenden"></a>
 <div class="msg affirmation">
-<span>Heute Buchungsabschluss zu setzen.</span>
+<span>Heute Buchungsabschluss setzen.</span>
 </div>
 </div>
 </div>
@@ -112,7 +184,6 @@ async function getBuchungsabschlussDate() {
   );
 }
 
-/** TODO beachtung feiertage fertigstellen */
 async function getHolidays(year) {
   const response = await fetch(
     window.location.origin +
@@ -133,7 +204,7 @@ async function getHolidays(year) {
 
   const json = await response.text();
   var o = JSON.parse(json);
-  return o.years[0].holidays.map((m) => new Date(m.date));
+  return o.years[0].holidays.map((m) => new bcsHolidayEntry(m.date, m.label));
 }
 
 /** "Fr. 01.03.24" zu Date */
@@ -159,4 +230,23 @@ async function readLocalStorage(key, fallbackValue) {
       }
     });
   });
+}
+
+/*
+ * ****************************************************************************************************
+ * Classes
+ * ****************************************************************************************************
+ */
+class bcsHolidayEntry {
+  constructor(dateString, label) {
+    this.date = new Date(dateString);
+    this.label = label;
+  }
+}
+class isEarlyBasedOnHolidays {
+  isEarlyBasedOnHolidays = false;
+  isReasonFridayInFuture = false;
+  isReasonLastDayOfMonthAndNotWeekendInFuture = false;
+  holidaysAheadArr = [];
+  constructor() {}
 }
