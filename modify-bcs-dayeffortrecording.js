@@ -8,6 +8,10 @@
     false
   );
 
+  if (await readLocalStorage("featFlagTreeNodeOpening", true)) {
+    await treeNodeOpening();
+  }
+
   const currentDateField = document.getElementById(
     "daytimerecording,Selections,effortRecordingDate_intervaldisplay"
   );
@@ -100,6 +104,71 @@
  * Functions
  * ****************************************************************************************************
  */
+
+async function treeNodeOpening() {
+  const selectorTreeNodesOpen =
+    'a.treeNodeIsOpen_jq[id ^= "daytimerecording,Content,daytimerecordingPspTree_"]';
+  const selectorTreeNodesClosed =
+    'a.treeNodeIsClosed_jq[id ^= "daytimerecording,Content,daytimerecordingPspTree_"]';
+
+  const lsTreeNodesOpendKey = "treeNodesOpend";
+
+  const treeNodesOpened = document.querySelectorAll(selectorTreeNodesOpen);
+
+  if (treeNodesOpened.length == 0) {
+    const lsTreeNodesOpendArr = await readLocalStorage(lsTreeNodesOpendKey, []);
+    if (lsTreeNodesOpendArr.length > 0) {
+      const treeNodesClosed = document.querySelectorAll(
+        selectorTreeNodesClosed
+      );
+      treeNodesClosed.forEach((f) => {
+        const found = lsTreeNodesOpendArr.find(
+          (el) => getEvDataOfTreeNode(f).treeNodeId === el
+        );
+        if (found) f.click();
+      });
+    }
+  }
+
+  const treeNodesAll = document.querySelectorAll(
+    `${selectorTreeNodesClosed},${selectorTreeNodesOpen}`
+  );
+  treeNodesAll.forEach((box) => {
+    box.addEventListener("click", async () => {
+      const evData = getEvDataOfTreeNode(box);
+      console.log(evData);
+
+      const lsTreeNodesOpendArr = await readLocalStorage(
+        lsTreeNodesOpendKey,
+        []
+      );
+      const index = lsTreeNodesOpendArr.indexOf(evData.treeNodeId);
+      switch (evData.state) {
+        case "open":
+          if (index === -1) lsTreeNodesOpendArr.push(evData.treeNodeId);
+          break;
+        case "close":
+          if (index > -1) lsTreeNodesOpendArr.splice(index, 1);
+          break;
+        default:
+          break;
+      }
+      writeLocalStorage(lsTreeNodesOpendKey, lsTreeNodesOpendArr);
+    });
+  });
+}
+
+function getEvDataOfTreeNode(element) {
+  // pathname example: AjaxPage.ajaxRequest('daytimerecording,Content,daytimerecordingPspTree', 'open', '1216024970389_JProject', '1', '6' , 'false','true')
+  const commandArr = element.pathname
+    .split("(")
+    .pop()
+    .split(")")[0] // request command
+    .replace(/\s/g, "") // remove whitespace
+    .slice(1, -1)
+    .split("','"); // create array
+  return new evTreeToggle(commandArr[2], commandArr[1]);
+}
 
 function isDateFriday(date) {
   return date.getDay() === 5;
@@ -232,6 +301,10 @@ async function readLocalStorage(key, fallbackValue) {
   });
 }
 
+function writeLocalStorage(key, value) {
+  browser.storage.sync.set({ [key]: value });
+}
+
 /*
  * ****************************************************************************************************
  * Classes
@@ -249,4 +322,12 @@ class isEarlyBasedOnHolidays {
   isReasonLastDayOfMonthAndNotWeekendInFuture = false;
   holidaysAheadArr = [];
   constructor() {}
+}
+class evTreeToggle {
+  constructor(treeNodeId, state) {
+    /** example: 1216024970389_JProject */
+    this.treeNodeId = treeNodeId;
+    /** example: close, open */
+    this.state = state;
+  }
 }

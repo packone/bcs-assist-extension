@@ -4,12 +4,12 @@ function saveOptions() {
     ignoriereBuchungsabschluss: document.querySelector(
       "#ignoriereBuchungsabschluss"
     ).checked,
-    ignoriereFeiertage: document.querySelector(
-      "#ignoriereFeiertage"
-    ).checked,
+    ignoriereFeiertage: document.querySelector("#ignoriereFeiertage").checked,
     featFlagHintBuchungsabschluss: document.querySelector(
       "#featFlagHintBuchungsabschluss"
     ).checked,
+    featFlagTreeNodeOpening: document.querySelector("#featFlagTreeNodeOpening")
+      .checked,
     featFlagNavigateArbeitszeitauswertung: document.querySelector(
       "#featFlagNavigateArbeitszeitauswertung"
     ).checked,
@@ -28,6 +28,10 @@ function restoreOptions() {
   browser.storage.sync.get("featFlagHintBuchungsabschluss").then((result) => {
     document.querySelector("#featFlagHintBuchungsabschluss").checked =
       result.featFlagHintBuchungsabschluss || true;
+  }, onError);
+  browser.storage.sync.get("featFlagTreeNodeOpening").then((result) => {
+    document.querySelector("#featFlagTreeNodeOpening").checked =
+      result.featFlagTreeNodeOpening || true;
   }, onError);
   browser.storage.sync
     .get("featFlagNavigateArbeitszeitauswertung")

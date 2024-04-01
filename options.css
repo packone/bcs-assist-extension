@@ -1,6 +1,11 @@
 form,
 body {
   display: grid;
+  margin: 1rem 0;
+
+  > p {
+    margin: 0;
+  }
 }
 button {
   width: fit-content;
@@ -11,6 +16,7 @@ button {
 
 form > ul {
   /* list icon size */
+  margin: 0;
   padding-left: 1.6rem;
   font-size: 1.6rem;
 
