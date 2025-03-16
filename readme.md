@@ -40,8 +40,26 @@
 
 ## TODO
 
-- Buchungsabschluss Hinweis Feiertage und Urlaubstage (im BCS) beachten
-- Browser Permission (Domain) verbesserung möglich?
+- Tagesbuchen Buchungsabschluss Hinweis: Feiertage und Urlaubstage (im BCS) beachten, damit rechtzeitig sichtbar
+- Urlaubsplanung: Vorschläge Urlaubstermine z.B. 
+  - wahrscheinliche Tage: Brückentage, Weihnachtsurlaub, Neujahrurlaub, (Osterurlaub, ...)
+    - orientiert an z.B. Feiertagskalender
+  - verschiedene Optionen für weitere Urlaubszeit am Stück (mehrere Tage) unterm Jahr wie z.B. Sommerurlaub
+    - orientiert an z.B. Jahreswetter, Schulferienkalender
+- Tagesbuchen Einträge aus anderer Quelle übernehmen
+  - z.B. Copy&Paste aus Excel Datei (Tabellarische Einträge, heißt z.B. automatische Feldzuordnung nötig oder UI)
+- Tagesbuchen extra Anzeige Anwesenheitszeit bis Uhrzeit x, damit (mit Pause) Stundenkonto 0 im aktuellen Monat erreicht wird.  
+  - Beispiel: Stundenkonto + 30 min, Arbeitsbeginn 8:00, Pause 1 Stunde, somit "Anwesenheitszeit bis 16:30 Uhr"
+  - ggf. Beachtung Kernarbeitszeit (also Hinweis wenn darunter)
+  - Anzeige eines Hinweis wenn aufgrund Beachtung Arbeitszeitgesetzlich maximale Arbeitszeit pro Tag überschritten werden müsste
+- Tagesbuchen Hinweis ungern gesehene Worte in Einträge bzw. Beschreibungstexte gefunden
+  - Einträge bzw. Beschreibungstexte werden beim speichern mit Wörterliste abgeglichen
+  - Die Wörterliste enthält ungern gesehene Worte wie z.B. "fertig", "einspielen"
+  - Wörter in Wörterliste über Optionen festlegen (Tabellarische Darstellung: Wort, Kommentar/Anmerkung, Alternativ Vorschlag)
+  - Erweitern um Namen von Personen (Tabellarische Darstellung: Vorname, Vorname Nachname)
+    - Verhindern von Vornamen auf Buchungen, welche auf Rechnungen bzw. extern verwendet werden
+    - Vorschlag Vorname Nachname wenn nur Vorname auf externen Buchungen gefunden
+- Browser Permission (Domain) Verbesserung möglich?
 - Test: content_script nur laden bei Einstieg von anderer URL nicht bei refresh oder anderweitigem neuladen
   - ~~`if (window.history.length !== 1) return;`~~
   - ? [How do you detect changes in url with a chrome extension?](https://stackoverflow.com/questions/67727261/how-do-you-detect-changes-in-url-with-a-chrome-extension)
