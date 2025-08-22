@@ -276,16 +276,22 @@ async function getHolidays(year) {
   return o.years[0].holidays.map((m) => new bcsHolidayEntry(m.date, m.label));
 }
 
-/** "Fr. 01.03.24" zu Date */
+/**
+ * BCS Datum String zu Date
+ * z.B.: 
+ * - "Fr. 01.03.24" (alte BCS Version)
+ * - "Fr 22.08.25 " (neue BCS Version)
+ */
 function getDateFromBcsString(bcsDateString) {
   return new Date(
     "20" +
       bcsDateString
+        .trim() // whitespace entfernen
+        .split(" ")
+        .pop() // Wochentag Kürzel entfernen
         .split(".")
-        .slice(1) // Wochentag Kürzel entfernen
         .toReversed()
         .join("/") // englisches Date Format
-        .replace(/\s/g, "") // whitespace entfernen
   );
 }
 
